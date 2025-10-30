@@ -5,8 +5,6 @@ access to a real HAProxy instance. Tests and production code should
 override these values.
 """
 
-# Example default: list of backend servers (used by the simple UI)
-BACKENDS = []
 
 # Default HAProxy socket (used by runtime-control helpers if implemented)
 HAPROXY_SOCKET = '/var/run/haproxy.sock'
@@ -20,8 +18,3 @@ HAPROXY_SOCKET = '/var/run/haproxy.sock'
 # Production default would be "/etc/haproxy/haproxy.cfg" but we point to a test
 # copy here so enable/disable flows can be exercised during development.
 HAPROXY_CFG = "/etc/haproxy/haproxy.cfg"
-
-# Define backend servers
-BACKENDS = {
-    "backend_servers": ["srv1", "srv2"]
-}

@@ -5,7 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>HAProxy Manager</title>
     <link rel="stylesheet" href="/static/style.css">
-    <style>body{font-family:system-ui,Arial,Helvetica,sans-serif;margin:2rem}</style>
+    <style>
+        body { font-family: system-ui, Arial, Helvetica, sans-serif; margin: 2rem; }
+        .status-box {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            color: white;
+            font-weight: bold;
+        }
+        .status-enabled { background-color: green; }
+        .status-disabled { background-color: red; }
+        .blink {
+            animation: pulse-green 2s infinite;
+            border-color: #28a745; /* Green border to match */
+        }
+        @keyframes pulse-green {
+            0% {
+                background-color: #28a745; /* Bootstrap success green */
+                box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(40, 167, 69, 0);
+            }
+            100% {
+                background-color: #218838; /* A slightly darker green */
+                box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+            }
+        }
+    </style>
 </head>
 <body>
         <h1>HAProxy Backend Manager</h1>
@@ -22,7 +50,7 @@
 
         <!-- Reload button (separate action) -->
         <form method="post" action="/reload" style="margin-bottom:1rem">
-                <button type="submit">Reload HAProxy (manual)</button>
+                <button type="submit" class="{{ 'blink' if reload_needed else '' }}">Reload HAProxy</button>
         </form>
     {% if backends %}
         {% for backend, servers in backends.items() %}
@@ -31,11 +59,14 @@
                 <ul>
                 {% for server in servers %}
                     <li>
-                        {{ server }}
+                        {{ server.name }} - <span class="status-box status-{{ server.status }}">{{ server.status }}</span>
                         <form method="post" style="display:inline">
-                            <input type="hidden" name="server" value="{{ server }}">
-                            <button name="action" value="enable">Enable</button>
-                            <button name="action" value="disable">Disable</button>
+                            <input type="hidden" name="server" value="{{ server.name }}">
+                            {% if server.status == 'disabled' %}
+                                <button name="action" value="enable">Enable</button>
+                            {% else %}
+                                <button name="action" value="disable">Disable</button>
+                            {% endif %}
                         </form>
                     </li>
                 {% endfor %}
