@@ -16,6 +16,12 @@
         }
         .status-enabled { background-color: green; }
         .status-disabled { background-color: red; }
+        .blink {
+            animation: blinker 1.5s linear infinite;
+        }
+        @keyframes blinker {
+            50% { background-color: #90ee90; } /* Light green */
+        }
     </style>
 </head>
 <body>
@@ -33,7 +39,7 @@
 
         <!-- Reload button (separate action) -->
         <form method="post" action="/reload" style="margin-bottom:1rem">
-                <button type="submit">Reload HAProxy (manual)</button>
+                <button type="submit" class="{{ 'blink' if reload_needed else '' }}">Reload HAProxy</button>
         </form>
     {% if backends %}
         {% for backend, servers in backends.items() %}
