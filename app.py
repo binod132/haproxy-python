@@ -25,12 +25,12 @@ def index():
 @app.route("/reload", methods=["POST"])
 def reload():
     """Trigger HAProxy reload and clear the 'reload_needed' flag."""
-    ok = reload_haproxy()
-    if ok:
-        flash("HAProxy reloaded successfully.")
+    success, message = reload_haproxy()
+    if success:
+        flash(message, "success")
         session['reload_needed'] = False
     else:
-        flash("HAProxy reload failed or requires elevated permissions.", "error")
+        flash(message, "error")
     return redirect(url_for("index"))
 
 if __name__ == "__main__":

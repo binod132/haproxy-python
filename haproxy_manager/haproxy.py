@@ -126,11 +126,34 @@ def toggle_server(server_name, comment=True):
         return False
 
 def reload_haproxy():
-    """Reload HAProxy safely."""
+    """
+    Safely check and reload HAProxy. Returns (success, message).
+    """
+    import importlib
+    from . import config as _config
+    importlib.reload(_config)
+    HAPROXY_CFG = _config.HAPROXY_CFG
+
+    # 1. Check configuration syntax first
+    try:
+        check_result = subprocess.run(
+            ["haproxy", "-c", "-f", HAPROXY_CFG],
+            capture_output=True, text=True, check=True
+        )
+    except subprocess.CalledProcessError as e:
+        error_message = f"HAProxy config is invalid: {e.stderr}"
+        print(error_message)
+        return (False, error_message)
+
+    # 2. If check is OK, proceed to reload
     try:
         subprocess.run(["sudo", "systemctl", "reload", "haproxy"], check=True)
-        return True
+        return (True, "HAProxy reloaded successfully.")
+    except subprocess.CalledProcessError as e:
+        error_message = f"HAProxy reload failed: {e.stderr}"
+        print(error_message)
+        return (False, error_message)
     except Exception as e:
-        # If reload fails (no sudo, not a systemd system, etc.) log and return False
-        print(f"Failed to reload haproxy: {e}")
-        return False
+        error_message = f"An unexpected error occurred during reload: {e}"
+        print(error_message)
+        return (False, error_message)
