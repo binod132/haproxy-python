@@ -31,11 +31,14 @@
                 <ul>
                 {% for server in servers %}
                     <li>
-                        {{ server }}
+                        {{ server.name }} - <span class="status-{{ server.status }}">{{ server.status }}</span>
                         <form method="post" style="display:inline">
-                            <input type="hidden" name="server" value="{{ server }}">
-                            <button name="action" value="enable">Enable</button>
-                            <button name="action" value="disable">Disable</button>
+                            <input type="hidden" name="server" value="{{ server.name }}">
+                            {% if server.status == 'disabled' %}
+                                <button name="action" value="enable">Enable</button>
+                            {% else %}
+                                <button name="action" value="disable">Disable</button>
+                            {% endif %}
                         </form>
                     </li>
                 {% endfor %}
