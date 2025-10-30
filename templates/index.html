@@ -7,8 +7,15 @@
     <link rel="stylesheet" href="/static/style.css">
     <style>
         body { font-family: system-ui, Arial, Helvetica, sans-serif; margin: 2rem; }
-        .status-enabled { color: green; }
-        .status-disabled { color: red; }
+        .status-box {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            color: white;
+            font-weight: bold;
+        }
+        .status-enabled { background-color: green; }
+        .status-disabled { background-color: red; }
     </style>
 </head>
 <body>
@@ -35,7 +42,7 @@
                 <ul>
                 {% for server in servers %}
                     <li>
-                        {{ server.name }} - <span class="status-{{ server.status }}">{{ server.status }}</span>
+                        {{ server.name }} - <span class="status-box status-{{ server.status }}">{{ server.status }}</span>
                         <form method="post" style="display:inline">
                             <input type="hidden" name="server" value="{{ server.name }}">
                             {% if server.status == 'disabled' %}
