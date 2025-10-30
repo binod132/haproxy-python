@@ -17,10 +17,21 @@
         .status-enabled { background-color: green; }
         .status-disabled { background-color: red; }
         .blink {
-            animation: blinker 1.5s linear infinite;
+            animation: pulse-green 2s infinite;
+            border-color: #28a745; /* Green border to match */
         }
-        @keyframes blinker {
-            50% { background-color: #90ee90; } /* Light green */
+        @keyframes pulse-green {
+            0% {
+                background-color: #28a745; /* Bootstrap success green */
+                box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(40, 167, 69, 0);
+            }
+            100% {
+                background-color: #218838; /* A slightly darker green */
+                box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+            }
         }
     </style>
 </head>
