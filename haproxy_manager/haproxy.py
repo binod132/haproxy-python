@@ -26,6 +26,32 @@ def reload_haproxy() -> None:
     """
     return None
 
+def parse_config():
+    """Parse HAProxy config to find backends and their servers."""
+    import importlib
+    from . import config as _config
+    importlib.reload(_config)
+    HAPROXY_CFG = _config.HAPROXY_CFG
+
+    backends = {}
+    current_backend = None
+
+    try:
+        with open(HAPROXY_CFG, "r") as f:
+            for line in f:
+                line = line.strip()
+                if line.startswith("backend"):
+                    current_backend = line.split()[1]
+                    backends[current_backend] = []
+                elif line.startswith("server") and current_backend:
+                    server_name = line.split()[1]
+                    backends[current_backend].append(server_name)
+    except (FileNotFoundError, IndexError):
+        # Return empty dict if config is missing or malformed
+        return {}
+
+    return backends
+
 import re
 import subprocess
 

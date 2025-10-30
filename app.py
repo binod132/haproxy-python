@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
-from haproxy_manager.config import BACKENDS
-from haproxy_manager.haproxy import toggle_server, reload_haproxy
+from haproxy_manager.haproxy import toggle_server, reload_haproxy, parse_config
 
 app = Flask(__name__)
 # Secret key for session (flash). Replace with a secure value in production.
@@ -20,8 +19,9 @@ def index():
         # We DO NOT reload HAProxy automatically here. Reload is a separate action/button.
         return redirect(url_for("index"))
 
-    # Render the main UI page. Keep route logic thin and delegate HAProxy operations to `haproxy_manager`.
-    return render_template("index.html", backends=BACKENDS)
+    # On every page load, we re-parse the config to get the latest server list.
+    backends = parse_config()
+    return render_template("index.html", backends=backends)
 
 
 @app.route("/reload", methods=["POST"])
