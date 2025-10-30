@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>HAProxy Manager</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>body{font-family:system-ui,Arial,Helvetica,sans-serif;margin:2rem}</style>
+</head>
+<body>
+        <h1>HAProxy Backend Manager</h1>
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div id="messages">
+                    {% for category, msg in messages %}
+                        <div class="flash {{ category }}">{{ msg }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Reload button (separate action) -->
+        <form method="post" action="/reload" style="margin-bottom:1rem">
+                <button type="submit">Reload HAProxy (manual)</button>
+        </form>
+    {% if backends %}
+        {% for backend, servers in backends.items() %}
+            <section>
+                <h2>{{ backend }}</h2>
+                <ul>
+                {% for server in servers %}
+                    <li>
+                        {{ server }}
+                        <form method="post" style="display:inline">
+                            <input type="hidden" name="server" value="{{ server }}">
+                            <button name="action" value="enable">Enable</button>
+                            <button name="action" value="disable">Disable</button>
+                        </form>
+                    </li>
+                {% endfor %}
+                </ul>
+            </section>
+        {% endfor %}
+    {% else %}
+        <p>No backend configuration found. You can edit `haproxy_manager/config.py` to add a `BACKENDS` mapping for the UI.</p>
+    {% endif %}
+</body>
+</html>
